@@ -1,4 +1,4 @@
-import { TrendingUp, Clock, CheckCircle, AlertCircle, Star, Sparkles } from 'lucide-react';
+import { TrendingUp, Clock, CheckCircle, AlertCircle, Star, Sparkles, Calendar, ArrowRight, Bell } from 'lucide-react';
 
 interface UserProfile {
   name: string;
@@ -40,6 +40,36 @@ export function Dashboard({ userProfile, recommendedSchemes, onSchemeClick }: Da
     'Social Security': 'bg-indigo-100 text-indigo-700',
   };
 
+  const upcomingSchemes = [
+    {
+      id: 'upcoming-1',
+      title: 'Digital India Scholarship 2026',
+      category: 'Education',
+      launchDate: 'March 15, 2026',
+      description: 'Scholarship for students pursuing tech education',
+      estimatedBenefit: '₹50,000 per year',
+      status: 'Coming Soon',
+    },
+    {
+      id: 'upcoming-2',
+      title: 'Green Energy Subsidy Scheme',
+      category: 'Housing',
+      launchDate: 'April 1, 2026',
+      description: 'Subsidies for solar panel installation in homes',
+      estimatedBenefit: 'Up to 40% subsidy',
+      status: 'Launching Soon',
+    },
+    {
+      id: 'upcoming-3',
+      title: 'Startup India 2.0',
+      category: 'Business',
+      launchDate: 'March 30, 2026',
+      description: 'Enhanced funding and support for new startups',
+      estimatedBenefit: '₹25 lakh funding',
+      status: 'Registration Open',
+    },
+  ];
+
   return (
     <div className="space-y-6">
       {/* Welcome Banner */}
@@ -70,6 +100,63 @@ export function Dashboard({ userProfile, recommendedSchemes, onSchemeClick }: Da
             <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
           </div>
         ))}
+      </div>
+
+      {/* Upcoming Schemes Section */}
+      <div className="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3">
+            <div className="bg-gradient-to-br from-orange-100 to-amber-100 p-3 rounded-lg">
+              <Calendar className="size-6 text-orange-600" />
+            </div>
+            <div>
+              <h2 className="text-xl font-semibold text-gray-900">Upcoming Schemes</h2>
+              <p className="text-sm text-gray-600">New opportunities launching soon</p>
+            </div>
+          </div>
+          <button className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1">
+            View All
+            <ArrowRight className="size-4" />
+          </button>
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-4">
+          {upcomingSchemes.map((scheme) => (
+            <div
+              key={scheme.id}
+              className="border border-gray-200 rounded-lg p-4 hover:border-orange-300 hover:shadow-md transition-all bg-gradient-to-br from-white to-orange-50/30"
+            >
+              <div className="flex items-start justify-between mb-3">
+                <span className={`text-xs px-2 py-1 rounded-full ${categoryColors[scheme.category] || 'bg-gray-100 text-gray-700'}`}>
+                  {scheme.category}
+                </span>
+                <span className="text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded-full flex items-center gap-1">
+                  <Bell className="size-3" />
+                  {scheme.status}
+                </span>
+              </div>
+              
+              <h3 className="font-semibold text-gray-900 mb-2">{scheme.title}</h3>
+              <p className="text-sm text-gray-600 mb-3">{scheme.description}</p>
+              
+              <div className="space-y-2 mb-3">
+                <div className="flex items-center gap-2 text-sm">
+                  <Calendar className="size-4 text-gray-400" />
+                  <span className="text-gray-600">Launches: {scheme.launchDate}</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm">
+                  <Star className="size-4 text-yellow-500" />
+                  <span className="text-gray-600">{scheme.estimatedBenefit}</span>
+                </div>
+              </div>
+
+              <button className="w-full bg-orange-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-orange-700 transition-colors flex items-center justify-center gap-2">
+                <Bell className="size-4" />
+                Get Notified
+              </button>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* AI-Powered Recommendations */}

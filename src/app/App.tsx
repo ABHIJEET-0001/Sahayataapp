@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Search, Menu, User, Bell, FileText, Heart, Home as HomeIcon, Briefcase, GraduationCap, TrendingUp, LayoutDashboard, GitCompare, Clock, UserCircle, LogOut } from 'lucide-react';
+import { Search, Menu, User, Bell, FileText, Heart, Home as HomeIcon, Briefcase, GraduationCap, TrendingUp, LayoutDashboard, GitCompare, Clock, UserCircle, LogOut, CheckCircle2 } from 'lucide-react';
 import { SchemeCard } from '@/app/components/scheme-card';
 import { CategoryButton } from '@/app/components/category-button';
 import { SchemeDetail } from '@/app/components/scheme-detail';
@@ -14,6 +14,8 @@ import { SchemeComparison } from '@/app/components/scheme-comparison';
 import { UserProfileComponent } from '@/app/components/user-profile';
 import { Login } from '@/app/components/login';
 import { Signup } from '@/app/components/signup';
+import { EligibilityDocuments } from '@/app/components/eligibility-documents';
+import { Chatbot } from '@/app/components/chatbot';
 
 // Mock data for government schemes
 const schemes = [
@@ -93,7 +95,7 @@ export default function App() {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedScheme, setSelectedScheme] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'schemes' | 'eligibility' | 'apply' | 'track' | 'documents' | 'compare' | 'profile'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'schemes' | 'eligibility-docs' | 'apply' | 'track' | 'compare' | 'profile'>('dashboard');
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [userProfile, setUserProfile] = useState<any>(null);
@@ -258,19 +260,17 @@ export default function App() {
           <div className="mb-8">
             <h2 className="text-3xl font-bold text-gray-900 mb-2">
               {activeTab === 'schemes' && 'Discover Government Schemes'}
-              {activeTab === 'eligibility' && 'Check Your Eligibility'}
+              {activeTab === 'eligibility-docs' && 'Check Your Eligibility'}
               {activeTab === 'apply' && 'Apply for Schemes'}
               {activeTab === 'track' && 'Track Applications'}
-              {activeTab === 'documents' && 'Prepare Documents'}
               {activeTab === 'compare' && 'Compare Schemes'}
               {activeTab === 'profile' && 'User Profile'}
             </h2>
             <p className="text-gray-600">
               {activeTab === 'schemes' && 'Find the right government schemes and services for you. Check eligibility and apply easily.'}
-              {activeTab === 'eligibility' && 'Answer a few questions to find schemes you\'re eligible for'}
+              {activeTab === 'eligibility-docs' && 'Answer a few questions to find schemes you\'re eligible for'}
               {activeTab === 'apply' && 'Fill in your details to apply for government schemes'}
               {activeTab === 'track' && 'Monitor the status of your applications in real-time'}
-              {activeTab === 'documents' && 'Get help preparing required documents with our step-by-step guide'}
               {activeTab === 'compare' && 'Compare multiple schemes side by side to make informed decisions'}
               {activeTab === 'profile' && 'View and manage your user profile'}
             </p>
@@ -335,25 +335,14 @@ export default function App() {
               Browse Schemes
             </button>
             <button
-              onClick={() => setActiveTab('eligibility')}
+              onClick={() => setActiveTab('eligibility-docs')}
               className={`pb-4 px-1 border-b-2 transition-colors whitespace-nowrap ${
-                activeTab === 'eligibility'
+                activeTab === 'eligibility-docs'
                   ? 'border-blue-600 text-blue-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700'
               }`}
             >
               Check Eligibility
-            </button>
-            <button
-              onClick={() => setActiveTab('documents')}
-              className={`pb-4 px-1 border-b-2 transition-colors whitespace-nowrap flex items-center gap-2 ${
-                activeTab === 'documents'
-                  ? 'border-blue-600 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
-              }`}
-            >
-              <FileText className="size-4" />
-              Documents
             </button>
             <button
               onClick={() => setActiveTab('apply')}
@@ -430,7 +419,7 @@ export default function App() {
               <SchemeDetail
                 scheme={currentScheme!}
                 onBack={() => setSelectedScheme(null)}
-                onCheckEligibility={() => setActiveTab('eligibility')}
+                onCheckEligibility={() => setActiveTab('eligibility-docs')}
                 onApply={() => setActiveTab('apply')}
               />
             )}
@@ -445,15 +434,8 @@ export default function App() {
           </>
         )}
 
-        {activeTab === 'eligibility' && (
-          <EligibilityChecker schemes={schemes} />
-        )}
-
-        {activeTab === 'documents' && (
-          <DocumentWizard
-            schemeName="Pradhan Mantri Awas Yojana"
-            requiredDocuments={['Aadhaar Card', 'Income Certificate', 'Property Documents']}
-          />
+        {activeTab === 'eligibility-docs' && (
+          <EligibilityDocuments schemes={schemes} />
         )}
 
         {activeTab === 'apply' && (
@@ -487,6 +469,9 @@ export default function App() {
           </div>
         </div>
       </footer>
+
+      {/* Chatbot */}
+      <Chatbot />
     </div>
   );
 }
