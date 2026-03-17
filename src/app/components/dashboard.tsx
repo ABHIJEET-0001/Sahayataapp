@@ -1,4 +1,5 @@
 import { TrendingUp, Clock, CheckCircle, AlertCircle, Star, Sparkles, Calendar, ArrowRight, Bell } from 'lucide-react';
+import { translations, type Language } from '@/app/utils/translations';
 
 interface UserProfile {
   name: string;
@@ -21,14 +22,18 @@ interface DashboardProps {
   userProfile: UserProfile;
   recommendedSchemes: Scheme[];
   onSchemeClick: (schemeId: string) => void;
+  onNavigate?: (tab: string) => void;
+  language: Language;
 }
 
-export function Dashboard({ userProfile, recommendedSchemes, onSchemeClick }: DashboardProps) {
+export function Dashboard({ userProfile, recommendedSchemes, onSchemeClick, onNavigate, language = 'en' }: DashboardProps) {
+  const t = translations[language];
+  
   const stats = [
-    { label: 'Schemes Found', value: recommendedSchemes.length, icon: <Star className="size-5" />, color: 'bg-blue-100 text-blue-600' },
-    { label: 'Applications', value: '3', icon: <Clock className="size-5" />, color: 'bg-orange-100 text-orange-600' },
-    { label: 'Approved', value: '1', icon: <CheckCircle className="size-5" />, color: 'bg-green-100 text-green-600' },
-    { label: 'Pending', value: '2', icon: <AlertCircle className="size-5" />, color: 'bg-yellow-100 text-yellow-600' },
+    { label: t.schemes, value: recommendedSchemes.length, icon: <Star className="size-5" />, color: 'bg-blue-100 text-blue-600' },
+    { label: t.applications, value: '3', icon: <Clock className="size-5" />, color: 'bg-orange-100 text-orange-600' },
+    { label: t.approved, value: '1', icon: <CheckCircle className="size-5" />, color: 'bg-green-100 text-green-600' },
+    { label: t.pending, value: '2', icon: <AlertCircle className="size-5" />, color: 'bg-yellow-100 text-yellow-600' },
   ];
 
   const categoryColors: Record<string, string> = {
@@ -73,16 +78,16 @@ export function Dashboard({ userProfile, recommendedSchemes, onSchemeClick }: Da
   return (
     <div className="space-y-6">
       {/* Welcome Banner */}
-      <div className="bg-gradient-to-r from-orange-500 to-green-600 rounded-xl p-6 text-white">
+      <div className="bg-gradient-to-r from-orange-500 via-orange-600 to-green-600 rounded-xl p-8 text-white shadow-lg">
         <div className="flex items-start justify-between">
           <div>
-            <h1 className="text-2xl font-bold mb-2">Welcome back, {userProfile.name}!</h1>
-            <p className="text-blue-50">
-              We've found {recommendedSchemes.length} schemes that match your profile
+            <h1 className="text-3xl font-bold mb-2">{t.welcomeBack}, {userProfile.name}!</h1>
+            <p className="text-orange-50 text-lg">
+              {t.weFound} {recommendedSchemes.length} {t.schemesFound}
             </p>
           </div>
-          <div className="bg-white/20 backdrop-blur-sm p-3 rounded-lg">
-            <Sparkles className="size-8" />
+          <div className="bg-white/20 backdrop-blur-sm p-4 rounded-xl shadow-lg">
+            <Sparkles className="size-10" />
           </div>
         </div>
       </div>
@@ -90,14 +95,24 @@ export function Dashboard({ userProfile, recommendedSchemes, onSchemeClick }: Da
       {/* Stats Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map((stat, index) => (
-          <div key={index} className="bg-white rounded-xl p-4 border border-gray-100 shadow-sm">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-gray-600">{stat.label}</span>
-              <div className={`p-2 rounded-lg ${stat.color}`}>
+          <div 
+            key={index} 
+            className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm hover:shadow-md transition-all cursor-pointer group"
+            onClick={() => {
+              if (stat.label === 'Applications' || stat.label === 'Approved' || stat.label === 'Pending') {
+                onNavigate?.('track');
+              } else if (stat.label === 'Schemes Found') {
+                onNavigate?.('schemes');
+              }
+            }}
+          >
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-sm text-gray-600 font-medium">{stat.label}</span>
+              <div className={`p-2.5 rounded-lg ${stat.color} group-hover:scale-110 transition-transform`}>
                 {stat.icon}
               </div>
             </div>
-            <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
+            <p className="text-3xl font-bold text-gray-900">{stat.value}</p>
           </div>
         ))}
       </div>
@@ -110,12 +125,12 @@ export function Dashboard({ userProfile, recommendedSchemes, onSchemeClick }: Da
               <Calendar className="size-6 text-orange-600" />
             </div>
             <div>
-              <h2 className="text-xl font-semibold text-gray-900">Upcoming Schemes</h2>
-              <p className="text-sm text-gray-600">New opportunities launching soon</p>
+              <h2 className="text-xl font-semibold text-gray-900">{t.upcomingSchemes}</h2>
+              <p className="text-sm text-gray-600">{t.newOpportunities}</p>
             </div>
           </div>
           <button className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1">
-            View All
+            {t.viewAll}
             <ArrowRight className="size-4" />
           </button>
         </div>
@@ -142,7 +157,7 @@ export function Dashboard({ userProfile, recommendedSchemes, onSchemeClick }: Da
               <div className="space-y-2 mb-3">
                 <div className="flex items-center gap-2 text-sm">
                   <Calendar className="size-4 text-gray-400" />
-                  <span className="text-gray-600">Launches: {scheme.launchDate}</span>
+                  <span className="text-gray-600">{t.launches}: {scheme.launchDate}</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm">
                   <Star className="size-4 text-yellow-500" />
@@ -152,7 +167,7 @@ export function Dashboard({ userProfile, recommendedSchemes, onSchemeClick }: Da
 
               <button className="w-full bg-orange-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-orange-700 transition-colors flex items-center justify-center gap-2">
                 <Bell className="size-4" />
-                Get Notified
+                {t.getNotified}
               </button>
             </div>
           ))}
@@ -166,8 +181,8 @@ export function Dashboard({ userProfile, recommendedSchemes, onSchemeClick }: Da
             <Sparkles className="size-6 text-purple-600" />
           </div>
           <div>
-            <h2 className="text-xl font-semibold text-gray-900">AI-Powered Recommendations</h2>
-            <p className="text-sm text-gray-600">Personalized schemes based on your profile</p>
+            <h2 className="text-xl font-semibold text-gray-900">{t.aiRecommendations}</h2>
+            <p className="text-sm text-gray-600">{t.personalizedSchemes}</p>
           </div>
         </div>
 
@@ -189,7 +204,7 @@ export function Dashboard({ userProfile, recommendedSchemes, onSchemeClick }: Da
                       {scheme.matchScore && scheme.matchScore >= 80 && (
                         <span className="bg-green-100 text-green-700 text-xs px-2 py-1 rounded-full flex items-center gap-1">
                           <Star className="size-3" />
-                          {scheme.matchScore}% Match
+                          {scheme.matchScore}% {t.match}
                         </span>
                       )}
                     </div>
@@ -200,7 +215,7 @@ export function Dashboard({ userProfile, recommendedSchemes, onSchemeClick }: Da
                   </div>
                 </div>
                 <div className="text-sm text-blue-600 font-medium whitespace-nowrap">
-                  View Details →
+                  {t.viewDetails} →
                 </div>
               </div>
             </div>
@@ -210,25 +225,33 @@ export function Dashboard({ userProfile, recommendedSchemes, onSchemeClick }: Da
 
       {/* Quick Actions */}
       <div className="grid md:grid-cols-2 gap-4">
-        <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 border border-blue-200">
+        <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 border border-blue-200 hover:shadow-lg transition-all">
           <TrendingUp className="size-8 text-blue-600 mb-3" />
-          <h3 className="font-semibold text-gray-900 mb-2">Track Applications</h3>
+          <h3 className="font-semibold text-gray-900 mb-2">{t.trackApplications}</h3>
           <p className="text-sm text-gray-600 mb-4">
-            Monitor the status of your submitted applications in real-time
+            {t.trackDesc}
           </p>
-          <button className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition-colors">
-            View Status
+          <button 
+            onClick={() => onNavigate?.('track')}
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition-colors w-full flex items-center justify-center gap-2"
+          >
+            {t.viewStatus}
+            <ArrowRight className="size-4" />
           </button>
         </div>
 
-        <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6 border border-green-200">
+        <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6 border border-green-200 hover:shadow-lg transition-all">
           <CheckCircle className="size-8 text-green-600 mb-3" />
-          <h3 className="font-semibold text-gray-900 mb-2">Document Checklist</h3>
+          <h3 className="font-semibold text-gray-900 mb-2">{t.documentChecklist}</h3>
           <p className="text-sm text-gray-600 mb-4">
-            Prepare required documents with our step-by-step guide
+            {t.documentDesc}
           </p>
-          <button className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-green-700 transition-colors">
-            Get Started
+          <button 
+            onClick={() => onNavigate?.('eligibility-docs')}
+            className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-green-700 transition-colors w-full flex items-center justify-center gap-2"
+          >
+            {t.getStarted}
+            <ArrowRight className="size-4" />
           </button>
         </div>
       </div>

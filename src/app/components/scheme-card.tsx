@@ -29,19 +29,19 @@ export function SchemeCard({ scheme, onClick }: SchemeCardProps) {
   return (
     <div 
       onClick={onClick}
-      className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow cursor-pointer border border-gray-100 overflow-hidden"
+      className="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all cursor-pointer border border-gray-100 overflow-hidden hover:border-blue-200 group"
     >
       <div className="p-6">
         <div className="flex items-start justify-between mb-4">
-          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-3 rounded-lg">
+          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-3 rounded-lg group-hover:scale-110 transition-transform">
             {scheme.icon}
           </div>
-          <span className={`px-3 py-1 rounded-full text-xs ${categoryColors[scheme.category] || 'bg-gray-100 text-gray-700'}`}>
+          <span className={`px-3 py-1 rounded-full text-xs font-medium ${categoryColors[scheme.category] || 'bg-gray-100 text-gray-700'}`}>
             {scheme.category}
           </span>
         </div>
         
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">
+        <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
           {scheme.title}
         </h3>
         
@@ -50,11 +50,11 @@ export function SchemeCard({ scheme, onClick }: SchemeCardProps) {
         </p>
         
         <div className="mb-4">
-          <p className="text-xs text-gray-500 mb-2">Key Benefits:</p>
+          <p className="text-xs text-gray-500 mb-2 font-medium">Key Benefits:</p>
           <ul className="space-y-1">
             {scheme.benefits.slice(0, 2).map((benefit, index) => (
               <li key={index} className="text-sm text-gray-700 flex items-start gap-2">
-                <span className="text-green-500 mt-1">•</span>
+                <span className="text-green-500 mt-1 text-base">•</span>
                 <span className="line-clamp-1">{benefit}</span>
               </li>
             ))}
@@ -62,8 +62,8 @@ export function SchemeCard({ scheme, onClick }: SchemeCardProps) {
         </div>
         
         <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-          <span className="text-sm text-blue-600 font-medium">Learn more</span>
-          <ArrowRight className="size-4 text-blue-600" />
+          <span className="text-sm text-blue-600 font-medium group-hover:text-blue-700">Learn more</span>
+          <ArrowRight className="size-4 text-blue-600 group-hover:translate-x-1 transition-transform" />
         </div>
       </div>
     </div>

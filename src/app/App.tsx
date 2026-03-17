@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Search, Menu, User, Bell, FileText, Heart, Home as HomeIcon, Briefcase, GraduationCap, TrendingUp, LayoutDashboard, GitCompare, Clock, UserCircle, LogOut, CheckCircle2 } from 'lucide-react';
+import { Search, Menu, User, Bell, FileText, Heart, Home as HomeIcon, Briefcase, GraduationCap, TrendingUp, LayoutDashboard, GitCompare, Clock, UserCircle, LogOut, CheckCircle2, Languages } from 'lucide-react';
 import { SchemeCard } from '@/app/components/scheme-card';
 import { CategoryButton } from '@/app/components/category-button';
 import { SchemeDetail } from '@/app/components/scheme-detail';
@@ -16,6 +16,7 @@ import { Login } from '@/app/components/login';
 import { Signup } from '@/app/components/signup';
 import { EligibilityDocuments } from '@/app/components/eligibility-documents';
 import { Chatbot } from '@/app/components/chatbot';
+import { translations, type Language } from '@/app/utils/translations';
 
 // Mock data for government schemes
 const schemes = [
@@ -103,11 +104,17 @@ export default function App() {
   const [authState, setAuthState] = useState<'login' | 'signup' | 'authenticated'>('login');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [currentUser, setCurrentUser] = useState<any>(null);
+  const [language, setLanguage] = useState<Language>('en');
 
   // Check for existing session on mount
   useEffect(() => {
     const sessionData = localStorage.getItem('sahayata_session') || sessionStorage.getItem('sahayata_session');
     const profileData = localStorage.getItem('sahayata_profile');
+    const savedLanguage = localStorage.getItem('sahayata_language') as Language;
+    
+    if (savedLanguage) {
+      setLanguage(savedLanguage);
+    }
     
     if (sessionData) {
       const session = JSON.parse(sessionData);
@@ -123,6 +130,14 @@ export default function App() {
       }
     }
   }, []);
+
+  const toggleLanguage = () => {
+    const newLang = language === 'en' ? 'hi' : 'en';
+    setLanguage(newLang);
+    localStorage.setItem('sahayata_language', newLang);
+  };
+
+  const t = translations[language];
 
   const filteredSchemes = schemes.filter(scheme => {
     const matchesCategory = selectedCategory === 'All' || scheme.category === selectedCategory;
@@ -205,25 +220,38 @@ export default function App() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
       {/* Header */}
-      <header className="bg-white shadow-sm sticky top-0 z-10">
+      <header className="bg-white shadow-sm sticky top-0 z-10 border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-3">
-              <div className="bg-gradient-to-br from-orange-500 to-green-600 p-2 rounded-lg">
+            <button 
+              onClick={() => setActiveTab('dashboard')}
+              className="flex items-center gap-3 hover:opacity-80 transition-opacity"
+            >
+              <div className="bg-gradient-to-br from-orange-500 to-green-600 p-2 rounded-lg shadow-md">
                 <FileText className="size-6 text-white" />
               </div>
               <div>
                 <h1 className="font-bold text-xl text-gray-900">Sahayata</h1>
                 <p className="text-xs text-gray-500">Government Schemes Helper</p>
               </div>
-            </div>
+            </button>
             <div className="flex items-center gap-4">
+              <button 
+                onClick={toggleLanguage}
+                className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors"
+                title={language === 'en' ? 'Switch to Hindi' : 'Switch to English'}
+              >
+                <Languages className="size-5 text-gray-600" />
+                <span className="text-sm font-medium text-gray-700 hidden sm:inline">
+                  {language === 'en' ? 'हिंदी' : 'English'}
+                </span>
+              </button>
               <button 
                 onClick={() => setShowNotifications(!showNotifications)}
                 className="relative p-2 rounded-full hover:bg-gray-100 transition-colors"
               >
                 <Bell className="size-5 text-gray-600" />
-                <span className="absolute top-1 right-1 size-2 bg-red-500 rounded-full"></span>
+                <span className="absolute top-1 right-1 size-2 bg-red-500 rounded-full animate-pulse"></span>
               </button>
               <div className="flex items-center gap-2">
                 <div className="text-right hidden sm:block">
@@ -239,10 +267,10 @@ export default function App() {
                 <button 
                   onClick={handleLogout}
                   className="flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                  title="Logout"
+                  title={t.logout}
                 >
                   <LogOut className="size-4" />
-                  <span className="hidden sm:inline">Logout</span>
+                  <span className="hidden sm:inline">{t.logout}</span>
                 </button>
               </div>
             </div>
@@ -259,20 +287,20 @@ export default function App() {
         {activeTab !== 'dashboard' && (
           <div className="mb-8">
             <h2 className="text-3xl font-bold text-gray-900 mb-2">
-              {activeTab === 'schemes' && 'Discover Government Schemes'}
-              {activeTab === 'eligibility-docs' && 'Check Your Eligibility'}
-              {activeTab === 'apply' && 'Apply for Schemes'}
-              {activeTab === 'track' && 'Track Applications'}
-              {activeTab === 'compare' && 'Compare Schemes'}
-              {activeTab === 'profile' && 'User Profile'}
+              {activeTab === 'schemes' && t.discoverSchemes}
+              {activeTab === 'eligibility-docs' && t.checkEligibilityTitle}
+              {activeTab === 'apply' && t.applyTitle}
+              {activeTab === 'track' && t.trackTitle}
+              {activeTab === 'compare' && t.compareTitle}
+              {activeTab === 'profile' && t.profileTitle}
             </h2>
             <p className="text-gray-600">
-              {activeTab === 'schemes' && 'Find the right government schemes and services for you. Check eligibility and apply easily.'}
-              {activeTab === 'eligibility-docs' && 'Answer a few questions to find schemes you\'re eligible for'}
-              {activeTab === 'apply' && 'Fill in your details to apply for government schemes'}
-              {activeTab === 'track' && 'Monitor the status of your applications in real-time'}
-              {activeTab === 'compare' && 'Compare multiple schemes side by side to make informed decisions'}
-              {activeTab === 'profile' && 'View and manage your user profile'}
+              {activeTab === 'schemes' && t.discoverDesc}
+              {activeTab === 'eligibility-docs' && t.checkEligibilityDesc}
+              {activeTab === 'apply' && t.applyDesc}
+              {activeTab === 'track' && t.trackDesc2}
+              {activeTab === 'compare' && t.compareDesc}
+              {activeTab === 'profile' && t.profileDesc}
             </p>
           </div>
         )}
@@ -284,7 +312,7 @@ export default function App() {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-5 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search for schemes..."
+                placeholder={t.searchPlaceholder}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -311,81 +339,81 @@ export default function App() {
         )}
 
         {/* Navigation Tabs */}
-        <div className="mb-6 border-b border-gray-200">
-          <div className="flex gap-4 overflow-x-auto scrollbar-hide">
+        <div className="mb-6 border-b border-gray-200 bg-white rounded-t-xl px-4">
+          <div className="flex gap-6 overflow-x-auto scrollbar-hide">
             <button
               onClick={() => setActiveTab('dashboard')}
-              className={`pb-4 px-1 border-b-2 transition-colors whitespace-nowrap flex items-center gap-2 ${
+              className={`pb-4 pt-4 px-2 border-b-2 transition-all whitespace-nowrap flex items-center gap-2 font-medium ${
                 activeTab === 'dashboard'
                   ? 'border-blue-600 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
               <LayoutDashboard className="size-4" />
-              Dashboard
+              {t.dashboard}
             </button>
             <button
               onClick={() => setActiveTab('schemes')}
-              className={`pb-4 px-1 border-b-2 transition-colors whitespace-nowrap ${
+              className={`pb-4 pt-4 px-2 border-b-2 transition-all whitespace-nowrap font-medium ${
                 activeTab === 'schemes'
                   ? 'border-blue-600 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
-              Browse Schemes
+              {t.browseSchemes}
             </button>
             <button
               onClick={() => setActiveTab('eligibility-docs')}
-              className={`pb-4 px-1 border-b-2 transition-colors whitespace-nowrap ${
+              className={`pb-4 pt-4 px-2 border-b-2 transition-all whitespace-nowrap font-medium ${
                 activeTab === 'eligibility-docs'
                   ? 'border-blue-600 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
-              Check Eligibility
+              {t.checkEligibility}
             </button>
             <button
               onClick={() => setActiveTab('apply')}
-              className={`pb-4 px-1 border-b-2 transition-colors whitespace-nowrap ${
+              className={`pb-4 pt-4 px-2 border-b-2 transition-all whitespace-nowrap font-medium ${
                 activeTab === 'apply'
                   ? 'border-blue-600 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
-              Apply Now
+              {t.applyNow}
             </button>
             <button
               onClick={() => setActiveTab('track')}
-              className={`pb-4 px-1 border-b-2 transition-colors whitespace-nowrap flex items-center gap-2 ${
+              className={`pb-4 pt-4 px-2 border-b-2 transition-all whitespace-nowrap flex items-center gap-2 font-medium ${
                 activeTab === 'track'
                   ? 'border-blue-600 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
               <Clock className="size-4" />
-              Track Status
+              {t.trackStatus}
             </button>
             <button
               onClick={() => setActiveTab('compare')}
-              className={`pb-4 px-1 border-b-2 transition-colors whitespace-nowrap flex items-center gap-2 ${
+              className={`pb-4 pt-4 px-2 border-b-2 transition-all whitespace-nowrap flex items-center gap-2 font-medium ${
                 activeTab === 'compare'
                   ? 'border-blue-600 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
               <GitCompare className="size-4" />
-              Compare
+              {t.compare}
             </button>
             <button
               onClick={() => setActiveTab('profile')}
-              className={`pb-4 px-1 border-b-2 transition-colors whitespace-nowrap flex items-center gap-2 ${
+              className={`pb-4 pt-4 px-2 border-b-2 transition-all whitespace-nowrap flex items-center gap-2 font-medium ${
                 activeTab === 'profile'
                   ? 'border-blue-600 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
               <UserCircle className="size-4" />
-              Profile
+              {t.profile}
             </button>
           </div>
         </div>
@@ -399,6 +427,8 @@ export default function App() {
               setSelectedScheme(id);
               setActiveTab('schemes');
             }}
+            onNavigate={(tab) => setActiveTab(tab as any)}
+            language={language}
           />
         )}
 
@@ -464,8 +494,8 @@ export default function App() {
       <footer className="bg-gray-50 border-t border-gray-200 mt-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="text-center text-gray-600">
-            <p className="mb-2">© 2026 Sahayata - Government Schemes Helper</p>
-            <p className="text-sm">Helping citizens access government services easily</p>
+            <p className="mb-2">{t.copyright}</p>
+            <p className="text-sm">{t.tagline}</p>
           </div>
         </div>
       </footer>
